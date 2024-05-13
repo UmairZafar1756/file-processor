@@ -9,26 +9,40 @@ import requests
 import instructor
 from openai import OpenAI
 from dotenv import load_dotenv
-import os
-
+from enum import Enum
 
 app = FastAPI()
 
 load_dotenv()
 
-openai_key = os.getenv("OPENAI_KEY")
-client = instructor.from_openai(OpenAI(api_key=openai_key))
-
+client = instructor.from_openai(OpenAI(api_key="OPENAI_API_KEY"))
 
 # request model
 class FileURL(BaseModel):
     url: str
+class CompanyType(str, Enum):
+    LLC = 'LLC'
+    C_CORP = 'C-Corp'
 
+class Stakeholder(str, Enum):
+    Investor = 'Investor'
+    Employee = 'Employee'
+    Advisor = 'Advisor'
+class InvestmentType(str, Enum):
+    Safe = 'Safe'
+    ConvertNote = 'Convert Note'
+    Preferred = 'Preferred'
+    PricedRound = 'Preferred'
 
 # Define your desired output structure using standard pydantic schema
 class StructuredOutput(BaseModel):
     company_name: str
-
+    company_type: CompanyType
+    investment_entity: str
+    industry: str
+    stake_holder: Stakeholder
+    round_name: str
+    investment_type: InvestmentType
 
 def _clean_chunk_text(text: str) -> str:
     return clean(
